@@ -1,0 +1,12 @@
+{
+ "passenger_details": [
+      {
+        "NAME": "",
+        "AGE": 21,
+        "GENDER": "Male",
+        "SEAT": "",
+        "FOOD": ""
+      }
+    ],
+   "passenger_phn_no": "1234567891"
+}

@@ -1,0 +1,1 @@
+print("teacher's day")

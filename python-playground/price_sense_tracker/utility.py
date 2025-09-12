@@ -1,41 +1,53 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
 
 
+def get_product_detail(driver_or_element, by, locator, wait=None, index=None, numeric=False, default=None, split_index=None):
+    """
+    Generic utility to safely extract text or numbers from Selenium elements.
 
-def scroll_until_button(driver):
-    wait = WebDriverWait(driver, 20)
-    products_links = set()
-    products_grid = wait.until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="virtuoso-item-list"]')))
-    while True:
-        time.sleep(2)
-        product_card = products_grid.find_elements(By.CSS_SELECTOR, '[data-testid="product-card"]')
-        products_links.update(product_card)
-        try:
-            driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ARROW_DOWN)
-            # 2. If loading spinner is visible, wait for it to disappear
-            spinner = driver.find_element(By.XPATH, "//div[contains(@class, 'a-spinner')]")
-            if spinner.is_displayed():
-                print("⏳ Loading... waiting to finish")
-                wait.until(EC.invisibility_of_element_located((By.XPATH, spinner)))
-                continue  # stop scrolling while loading
-        except:
-            pass
+    Parameters:
+        driver_or_element: WebDriver or WebElement to search from.
+        by: Selenium By strategy (By.ID, By.CLASS_NAME, etc.).
+        locator: The locator string.
+        wait: Optional WebDriverWait instance to wait for the element.
+        index: Optional index if multiple elements are found.
+        numeric: Convert text to int or float if True.
+        default: Value to return if element not found or conversion fails.
+        split_index: If set, split text by space and return text at this index before conversion.
 
-        try:
-            # ✅ Now wait for the special button
-            target_btn = driver.find_element(By.CSS_SELECTOR, '[data-testid="load-more-view-more-button"]')
-            if target_btn.is_displayed():
-                print("✅ Target button is now visible!")
-                # target_btn.click()
-                return products_links
-        except:
-            pass
+    Returns:
+        str, int, float, or default value.
+    """
+    try:
+        # Locate element(s)
+        if wait:
+            element = wait.until(EC.presence_of_element_located((by, locator)))
+        else:
+            element = driver_or_element.find_element(by, locator)
 
+        # If multiple elements, select by index
+        if index is not None:
+            elements = driver_or_element.find_elements(by, locator)
+            element = elements[index] if len(elements) > index else None
 
+        if element:
+            text = element.text.strip()
+            if split_index is not None:
+                parts = text.split()
+                text = parts[split_index] if len(parts) > split_index else text
 
-
+            if numeric:
+                text = text.replace(",", "")
+                try:
+                    return int(text)
+                except ValueError:
+                    try:
+                        return float(text)
+                    except ValueError:
+                        return default
+            return text
+        return default
+    except Exception:
+        return default

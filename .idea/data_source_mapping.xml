@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/2e90963d-64ac-4129-aff9-6af6b5d80707/console.sql" value="2e90963d-64ac-4129-aff9-6af6b5d80707" />
+    <file url="file://$PROJECT_DIR$/python-playground/price_sense_tracker/price_sense.py" value="2e90963d-64ac-4129-aff9-6af6b5d80707" />
+  </component>
+</project>
